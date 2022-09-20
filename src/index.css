@@ -1,0 +1,16 @@
+.app {
+  width: 90%;
+  margin: auto;
+}
+
+h1.title {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #3867fa;
+  padding: 20px 0 10px;
+}
+
+p.description {
+  margin-bottom: 20px;
+  color: rgb(76, 76, 94);
+}
