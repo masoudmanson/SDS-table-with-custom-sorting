@@ -34,11 +34,16 @@ declare module "@tanstack/table-core" {
 
 const StyledActionList = styled("ul")`
   display: flex;
+  justify-content: end;
   & li {
     margin-right: 8px;
 
     & .MuiButtonBase-root {
       outline: 0;
+    }
+
+    &:last-child {
+      margin-right: 0;
     }
   }
 `;
@@ -174,6 +179,9 @@ function App() {
                         active={!!header.column.getIsSorted()}
                         onClick={header.column.getToggleSortingHandler()}
                         hideSortIcon={header.id === "actions" ? true : false}
+                        horizontalAlign={
+                          header.id === "actions" ? "right" : "left"
+                        }
                       >
                         {
                           flexRender(
@@ -260,7 +268,7 @@ function App() {
                       case "actions":
                         return (
                           <CellComponent
-                            horizontalAlign="left"
+                            horizontalAlign="right"
                             verticalAlign="center"
                           >
                             <StyledActionList>
