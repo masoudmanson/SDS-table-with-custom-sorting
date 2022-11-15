@@ -8,7 +8,8 @@ import {
   CellHeaderDirection,
   Icon,
   CellComponent,
-  Tag
+  Tag,
+  ButtonIcon,
 } from "czifui";
 import {
   ColumnDef,
@@ -18,17 +19,29 @@ import {
   Row,
   SortingFn,
   SortingState,
-  useReactTable
+  useReactTable,
 } from "@tanstack/react-table";
 import { makeData, Person } from "./makeData";
 
 import "./index.css";
+import { styled } from "@mui/material";
 
 declare module "@tanstack/table-core" {
   interface SortingFns {
     sortByLength: SortingFn<unknown>;
   }
 }
+
+const StyledActionList = styled("ul")`
+  display: flex;
+  & li {
+    margin-right: 8px;
+
+    & .MuiButtonBase-root {
+      outline: 0;
+    }
+  }
+`;
 
 function App() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -41,40 +54,45 @@ function App() {
         id: "firstName",
         cell: (info) => info.getValue(),
         header: "First Name",
-        footer: (props) => props.column.id
+        footer: (props) => props.column.id,
       },
       {
         accessorFn: (row) => row.lastName,
         id: "lastName",
         cell: (info) => info.getValue(),
         header: "Last Name",
-        sortingFn: "sortByLength"
+        sortingFn: "sortByLength",
       },
       {
         accessorKey: "age",
         header: "Age",
-        footer: (props) => props.column.id
+        footer: (props) => props.column.id,
       },
       {
         accessorKey: "visits",
         header: "Visits",
-        footer: (props) => props.column.id
+        footer: (props) => props.column.id,
       },
       {
         accessorKey: "status",
         id: "status",
         header: "Status",
-        footer: (props) => props.column.id
+        footer: (props) => props.column.id,
       },
       {
         accessorKey: "progress",
         header: "Profile Progress",
-        footer: (props) => props.column.id
+        footer: (props) => props.column.id,
       },
       {
         accessorKey: "createdAt",
-        header: "Created At"
-      }
+        header: "Created At",
+      },
+      {
+        id: "actions",
+        accessorKey: "actions",
+        header: "Actions",
+      },
     ],
     []
   );
@@ -83,7 +101,7 @@ function App() {
     data,
     columns,
     state: {
-      sorting
+      sorting,
     },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -101,8 +119,8 @@ function App() {
         if (a > b) return 1;
         if (a < b) return -1;
         return 0;
-      }
-    }
+      },
+    },
   });
 
   return (
@@ -155,9 +173,7 @@ function App() {
                         }
                         active={!!header.column.getIsSorted()}
                         onClick={header.column.getToggleSortingHandler()}
-                        horizontalAlign={
-                          header.id === "createdAt" ? "right" : "left"
-                        }
+                        hideSortIcon={header.id === "actions" ? true : false}
                       >
                         {
                           flexRender(
@@ -207,7 +223,7 @@ function App() {
                         const tagIndentMap = {
                           single: "beta",
                           relationship: "error",
-                          complicated: "warning"
+                          complicated: "warning",
                         };
                         const tagValue = cell.getValue() as string;
                         return (
@@ -229,17 +245,67 @@ function App() {
                             primaryText={dateObject.getFullYear().toString()}
                             secondaryText={dateObject.toLocaleString("en-us", {
                               month: "long",
-                              day: "numeric"
+                              day: "numeric",
                             })}
                             tooltipProps={{
                               title: cell.getValue().toString(),
                               sdsStyle: "dark",
                               leaveDelay: 0,
-                              leaveTouchDelay: 0
+                              leaveTouchDelay: 0,
                             }}
                             verticalAlign="center"
-                            horizontalAlign="right"
+                            horizontalAlign="left"
                           />
+                        );
+                      case "actions":
+                        return (
+                          <CellComponent
+                            horizontalAlign="left"
+                            verticalAlign="center"
+                          >
+                            <StyledActionList>
+                              <li>
+                                <ButtonIcon sdsSize="small" sdsType="secondary">
+                                  <Icon
+                                    sdsIcon="treeHorizontal"
+                                    sdsSize="s"
+                                    sdsType="iconButton"
+                                  />
+                                </ButtonIcon>
+                              </li>
+                              <li>
+                                <ButtonIcon sdsSize="small" sdsType="secondary">
+                                  <Icon
+                                    sdsIcon="barChartVertical3"
+                                    sdsSize="s"
+                                    sdsType="iconButton"
+                                  />
+                                </ButtonIcon>
+                              </li>
+                              <li>
+                                <ButtonIcon
+                                  sdsSize="small"
+                                  active
+                                  sdsType="secondary"
+                                >
+                                  <Icon
+                                    sdsIcon="download"
+                                    sdsSize="s"
+                                    sdsType="iconButton"
+                                  />
+                                </ButtonIcon>
+                              </li>
+                              <li>
+                                <ButtonIcon sdsSize="small" sdsType="secondary">
+                                  <Icon
+                                    sdsIcon="dotsHorizontal"
+                                    sdsSize="s"
+                                    sdsType="iconButton"
+                                  />
+                                </ButtonIcon>
+                              </li>
+                            </StyledActionList>
+                          </CellComponent>
                         );
                       default:
                         return (
